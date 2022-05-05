@@ -3,6 +3,7 @@ package com.example.phonebook.database
 import com.example.phonebook.domain.model.ColorModel
 import com.example.phonebook.domain.model.NEW_NOTE_ID
 import com.example.phonebook.domain.model.NoteModel
+import com.example.phonebook.domain.model.TagModel
 
 class DbMapper {
     // Create list of NoteModels by pairing each note with a color

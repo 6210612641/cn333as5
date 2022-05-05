@@ -1,64 +1,44 @@
-package com.example.mynotes.screens
+package com.example.phonebook.screens
+
 
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.List
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.tooling.preview.Preview
-import com.example.mynotes.domain.model.NoteModel
-import com.example.mynotes.routing.Screen
-import com.example.mynotes.ui.components.AppDrawer
-import com.example.mynotes.ui.components.Note
-import com.example.mynotes.viewmodel.MainViewModel
-import kotlinx.coroutines.launch
+import androidx.compose.ui.graphics.Color
+
+
+import com.example.phonebook.domain.model.NoteModel
+import com.example.phonebook.ui.components.Note
+import com.example.phonebook.viewmodel.MainViewModel
 
 @ExperimentalMaterialApi
 @Composable
 fun NotesScreen(viewModel: MainViewModel) {
     val notes by viewModel.notesNotInTrash.observeAsState(listOf())
     val scaffoldState: ScaffoldState = rememberScaffoldState()
-    val coroutineScope = rememberCoroutineScope()
 
     Scaffold(
         scaffoldState = scaffoldState,
         topBar = {
             TopAppBar(
+                backgroundColor = Color.DarkGray,
                 title = {
                     Text(
-                        text = "My Notes",
+                        text = "Phone book",
                         color = MaterialTheme.colors.onPrimary
                     )
                 },
-                navigationIcon = {
-                    IconButton(onClick = {
-                        coroutineScope.launch { scaffoldState.drawerState.open() }
-                    }) {
-                        Icon(
-                            imageVector = Icons.Filled.List,
-                            contentDescription = "Drawer Button"
-                        )
-                    }
-                }
             )
         },
-        drawerContent = {
-            AppDrawer(
-                currentScreen = Screen.Notes,
-                closeDrawerAction = {
-                    coroutineScope.launch {
-                        scaffoldState.drawerState.close()
-                    }
-                }
-            )
-        },
+
         floatingActionButtonPosition = FabPosition.End,
         floatingActionButton = {
             FloatingActionButton(
+                backgroundColor = Color.Black,
                 onClick = { viewModel.onCreateNewNoteClick() },
                 contentColor = MaterialTheme.colors.background,
                 content = {
@@ -73,9 +53,6 @@ fun NotesScreen(viewModel: MainViewModel) {
         if (notes.isNotEmpty()) {
             NotesList(
                 notes = notes,
-                onNoteCheckedChange = {
-                    viewModel.onNoteCheckedChange(it)
-                },
                 onNoteClick = { viewModel.onNoteClick(it) }
             )
         }
@@ -86,7 +63,6 @@ fun NotesScreen(viewModel: MainViewModel) {
 @Composable
 private fun NotesList(
     notes: List<NoteModel>,
-    onNoteCheckedChange: (NoteModel) -> Unit,
     onNoteClick: (NoteModel) -> Unit
 ) {
     LazyColumn {
@@ -95,24 +71,8 @@ private fun NotesList(
             Note(
                 note = note,
                 onNoteClick = onNoteClick,
-                onNoteCheckedChange = onNoteCheckedChange,
-                isSelected = false
             )
         }
     }
 }
 
-@ExperimentalMaterialApi
-@Preview
-@Composable
-private fun NotesListPreview() {
-    NotesList(
-        notes = listOf(
-            NoteModel(1, "Note 1", "Content 1", null),
-            NoteModel(2, "Note 2", "Content 2", false),
-            NoteModel(3, "Note 3", "Content 3", true)
-        ),
-        onNoteCheckedChange = {},
-        onNoteClick = {}
-    )
-}
